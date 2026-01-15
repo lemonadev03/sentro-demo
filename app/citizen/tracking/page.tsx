@@ -1,14 +1,34 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import HeaderBar from "@/components/HeaderBar";
-import MapPlaceholder from "@/components/MapPlaceholder";
 import SectionCard from "@/components/SectionCard";
 import TimelineStepper from "@/components/TimelineStepper";
 import ResponderCard from "@/components/ResponderCard";
 import StatusBadge, { StatusBadgeValue } from "@/components/StatusBadge";
+import FloatingActionBar from "@/components/FloatingActionBar";
 import { assignedResponder, mockIncident } from "@/lib/mock-data";
+
+const IncidentMap = dynamic(() => import("@/components/IncidentMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[320px] items-center justify-center rounded-2xl border border-border bg-muted/40 text-sm text-muted-foreground">
+      Loading map…
+    </div>
+  ),
+});
+
+const RouteMap = dynamic(() => import("@/components/RouteMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[320px] items-center justify-center rounded-2xl border border-border bg-muted/40 text-sm text-muted-foreground">
+      Loading route…
+    </div>
+  ),
+});
 
 const steps = [
   {
@@ -47,8 +67,20 @@ export default function CitizenTrackingPage() {
   const showResponder = status === "assigned" || status === "enroute";
   const showResolved = status === "resolved";
 
+  // Route path for responder
+  const routePath: Array<[number, number]> = [
+    [14.6208, 121.0531],
+    [14.6179, 121.0507],
+    [14.6154, 121.0476],
+    [14.6126, 121.0434],
+    [14.6102, 121.0399],
+    [14.6089, 121.0362],
+  ];
+  const incidentLocation: [number, number] = [14.5995, 120.9842];
+
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-8">
+    <>
+    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-6 px-6 py-8 pb-24">
       <HeaderBar title="Tracking" backHref="/citizen" />
 
       <SectionCard title="Incident status">
@@ -61,11 +93,28 @@ export default function CitizenTrackingPage() {
         <TimelineStepper steps={steps} currentKey={status} />
       </SectionCard>
 
-      <MapPlaceholder
-        src={mockIncident.incidentMapUrl}
-        alt="Incident map"
-        label="Incident map"
-      />
+      <SectionCard title="Map view" description="Incident location overview.">
+        <div className="flex flex-col">
+          <div className="h-[320px] w-full">
+            {showResponder ? (
+              <RouteMap
+                start={routePath[0]}
+                end={incidentLocation}
+                path={routePath}
+                label="Responder route"
+                currentPosition={routePath[Math.floor(routePath.length * 0.4)]}
+              />
+            ) : (
+              <IncidentMap center={incidentLocation} label="Incident location" />
+            )}
+          </div>
+          <div className="mt-3 text-xs text-muted-foreground">
+            {showResponder
+              ? `${assignedResponder.name} en route • ETA ${assignedResponder.eta}`
+              : mockIncident.locationLabel}
+          </div>
+        </div>
+      </SectionCard>
 
       {showResponder && (
         <SectionCard
@@ -110,6 +159,13 @@ export default function CitizenTrackingPage() {
           </Link>
         </SectionCard>
       )}
+
     </main>
+    <FloatingActionBar
+      onComments={() => console.log("Comments clicked")}
+      onGroupChat={() => console.log("Group chat clicked")}
+      onCall={() => console.log("Call clicked")}
+    />
+    </>
   );
 }

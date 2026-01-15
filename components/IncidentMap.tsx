@@ -14,17 +14,18 @@ const markerIcon = new L.Icon({
 type IncidentMapProps = {
   center: [number, number];
   label: string;
+  zoom?: number;
 };
 
-export default function IncidentMap({ center, label }: IncidentMapProps) {
+export default function IncidentMap({ center, label, zoom = 15 }: IncidentMapProps) {
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border">
+    <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border isolate">
       <MapContainer
         center={center}
-        zoom={15}
+        zoom={zoom}
         scrollWheelZoom={false}
         className="h-full w-full"
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "100%", width: "100%", minHeight: "320px" }}
       >
         <TileLayer
           attribution="&copy; OpenStreetMap contributors"

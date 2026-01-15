@@ -5,7 +5,7 @@ type SectionCardProps = {
   description?: string;
   action?: React.ReactNode;
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export default function SectionCard({
@@ -23,7 +23,7 @@ export default function SectionCard({
       )}
     >
       {(title || description || action) && (
-        <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+        <div className={cn("flex flex-wrap items-center justify-between gap-3", children ? "mb-6" : "")}>
           <div>
             {title && <h2 className="text-lg font-semibold">{title}</h2>}
             {description && (
@@ -33,7 +33,7 @@ export default function SectionCard({
           {action}
         </div>
       )}
-      <div className="flex-1 min-h-0">{children}</div>
+      {children && <div className="flex-1 min-h-0">{children}</div>}
     </section>
   );
 }

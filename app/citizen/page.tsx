@@ -27,23 +27,12 @@ export default function CitizenHomePage() {
         action={
           <Link
             href="/citizen/type"
-            className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            className="rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
-            Start report
+            File a Report
           </Link>
         }
       >
-        <div className="grid gap-3 text-sm text-muted-foreground md:grid-cols-3">
-          <div className="rounded-xl bg-muted/50 px-4 py-3">
-            📍 Location auto-detect
-          </div>
-          <div className="rounded-xl bg-muted/50 px-4 py-3">
-            📸 Add a photo or video
-          </div>
-          <div className="rounded-xl bg-muted/50 px-4 py-3">
-            🧭 Live updates from responders
-          </div>
-        </div>
       </SectionCard>
 
       <SectionCard

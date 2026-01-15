@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import HeaderBar from "@/components/HeaderBar";
 import ResponderCard from "@/components/ResponderCard";
 import SectionCard from "@/components/SectionCard";
@@ -39,6 +39,7 @@ type UnitAssignment = {
 };
 
 export default function DispatchIncidentPage() {
+  const router = useRouter();
   const [aiEnabled, setAiEnabled] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
   const [callOpen, setCallOpen] = useState(false);
@@ -857,11 +858,13 @@ export default function DispatchIncidentPage() {
                     </svg>
                   ),
                   variant: "secondary" as const,
+                  onClick: () => router.push("/dispatch/incident/recap"),
                 },
               ].map((action) => (
                 <button
                   key={action.label}
                   type="button"
+                  onClick={action.onClick || undefined}
                   className={`inline-flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
                     action.variant === "primary"
                       ? "border-[color:var(--dispatch)] bg-[color:var(--dispatch)] text-white hover:bg-[color:var(--dispatch)]/90"
