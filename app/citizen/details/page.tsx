@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import HeaderBar from "@/components/HeaderBar";
 import SectionCard from "@/components/SectionCard";
 import { mockIncident } from "@/lib/mock-data";
+import { Camera } from "lucide-react";
 
 const IncidentMap = dynamic(() => import("@/components/IncidentMap"), {
   ssr: false,
@@ -16,6 +18,7 @@ const IncidentMap = dynamic(() => import("@/components/IncidentMap"), {
 });
 
 export default function CitizenDetailsPage() {
+  const [photosAdded, setPhotosAdded] = useState(false);
   const incidentLocation: [number, number] = [14.5995, 120.9842];
 
   return (
@@ -43,29 +46,47 @@ export default function CitizenDetailsPage() {
       </SectionCard>
 
       <SectionCard title="Photo" description="Add a photo to help responders.">
-        <div className="grid grid-cols-3 gap-3">
-          <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/40">
-            <img
-              src="/photos/vehicle.png"
-              alt="Vehicle damage"
-              className="h-full w-full object-cover"
-            />
+        {!photosAdded ? (
+          <button
+            type="button"
+            onClick={() => setPhotosAdded(true)}
+            className="flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border bg-muted/20 p-12 hover:bg-muted/40 transition-colors"
+          >
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Camera className="h-8 w-8 text-primary" />
+            </div>
+            <div className="text-center">
+              <p className="text-base font-semibold text-foreground">Add photos</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Tap to add photos of the incident
+              </p>
+            </div>
+          </button>
+        ) : (
+          <div className="grid grid-cols-3 gap-3">
+            <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/40">
+              <img
+                src="/photos/vehicle.png"
+                alt="Vehicle damage"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/40">
+              <img
+                src="/photos/intersection.png"
+                alt="Intersection"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/40">
+              <img
+                src="/photos/front_car_issue.png"
+                alt="Front car issue"
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
-          <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/40">
-            <img
-              src="/photos/intersection.png"
-              alt="Intersection"
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/40">
-            <img
-              src="/photos/front_car_issue.png"
-              alt="Front car issue"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
+        )}
       </SectionCard>
 
       <SectionCard

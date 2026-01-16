@@ -8,10 +8,13 @@ type BarangayInfo = {
   residents: number;
 };
 
+type AlertType = "warning" | "critical";
+
 type FloatingAlertProps = {
   affectedBarangays: BarangayInfo[];
   onSendAlerts: () => void;
   onDismiss?: () => void;
+  alertType?: AlertType;
   className?: string;
 };
 
@@ -19,12 +22,27 @@ export default function FloatingAlert({
   affectedBarangays,
   onSendAlerts,
   onDismiss,
+  alertType = "critical",
   className,
 }: FloatingAlertProps) {
   const totalResidents = affectedBarangays.reduce(
     (sum, b) => sum + b.residents,
     0
   );
+
+  const isCritical = alertType === "critical";
+  const borderColor = isCritical ? "border-red-400" : "border-amber-400";
+  const shadowColor = isCritical ? "shadow-red-500/20" : "shadow-amber-500/20";
+  const headerGradient = isCritical
+    ? "bg-gradient-to-r from-red-600 to-orange-500"
+    : "bg-gradient-to-r from-amber-500 to-yellow-500";
+  const bgColor = isCritical ? "bg-red-50" : "bg-amber-50";
+  const textColor = isCritical ? "text-red-600" : "text-amber-600";
+  const buttonBg = isCritical ? "bg-red-600 hover:bg-red-700" : "bg-amber-600 hover:bg-amber-700";
+  const title = isCritical ? "Flood Alert" : "Flood Warning";
+  const description = isCritical
+    ? "Critical water levels detected. Send evacuation alerts to affected barangays:"
+    : "Warning water levels detected. Send precautionary alerts to affected barangays:";
 
   return (
     <div
@@ -36,15 +54,15 @@ export default function FloatingAlert({
         animation: "slideInRight 0.3s ease-out",
       }}
     >
-      <div className="overflow-hidden rounded-2xl border-2 border-red-400 bg-white shadow-2xl shadow-red-500/20">
+      <div className={cn("overflow-hidden rounded-2xl border-2 bg-white shadow-2xl", borderColor, shadowColor)}>
         {/* Header */}
-        <div className="flex items-center justify-between bg-gradient-to-r from-red-600 to-orange-500 px-4 py-3">
+        <div className={cn("flex items-center justify-between px-4 py-3", headerGradient)}>
           <div className="flex items-center gap-2 text-white">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
               <AlertTriangle className="h-4 w-4" />
             </div>
             <span className="font-bold uppercase tracking-wide">
-              Flood Alert
+              {title}
             </span>
           </div>
           {onDismiss && (
@@ -60,8 +78,7 @@ export default function FloatingAlert({
         {/* Content */}
         <div className="p-4">
           <p className="text-sm text-slate-600 mb-3">
-            Critical water levels detected. Send evacuation alerts to affected
-            barangays:
+            {description}
           </p>
 
           {/* Barangay list */}
@@ -69,7 +86,7 @@ export default function FloatingAlert({
             {affectedBarangays.map((barangay) => (
               <div
                 key={barangay.name}
-                className="flex items-center justify-between rounded-lg bg-red-50 px-3 py-2"
+                className={cn("flex items-center justify-between rounded-lg px-3 py-2", bgColor)}
               >
                 <span className="font-medium text-sm">{barangay.name}</span>
                 <div className="flex items-center gap-1 text-xs text-slate-500">
@@ -83,7 +100,7 @@ export default function FloatingAlert({
           {/* Total */}
           <div className="flex items-center justify-between text-sm mb-4 px-1">
             <span className="text-slate-500">Total at risk</span>
-            <span className="font-bold text-red-600">
+            <span className={cn("font-bold", textColor)}>
               {totalResidents.toLocaleString()} residents
             </span>
           </div>
@@ -91,7 +108,7 @@ export default function FloatingAlert({
           {/* CTA Button */}
           <button
             onClick={onSendAlerts}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 font-semibold text-white hover:bg-red-700 active:scale-[0.98] transition-all"
+            className={cn("w-full flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold text-white active:scale-[0.98] transition-all", buttonBg)}
           >
             <AlertTriangle className="h-4 w-4" />
             Send Alerts Now

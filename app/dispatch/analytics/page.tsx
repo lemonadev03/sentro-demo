@@ -1298,6 +1298,232 @@ export default function GlobalAnalyticsPage() {
         </SectionCard>
       </div>
 
+      {/* Resource Utilization Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <SectionCard
+          title="Resource Utilization Trends"
+          description="Unit utilization over time"
+        >
+          <div className="space-y-4">
+            {fleetStatus.map((item) => {
+              const utilization = Math.round((item.busy / item.total) * 100);
+              const utilizationData = buildSparkline(
+                Math.max(0, utilization - 15),
+                utilization,
+                12,
+                3,
+                0
+              );
+              const maxUtil = Math.max(...utilizationData, 100);
+              
+              return (
+                <div key={item.role} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-foreground">
+                      {item.role}
+                    </span>
+                    <span
+                      className={`font-semibold ${
+                        utilization >= 70
+                          ? "text-red-600"
+                          : utilization >= 45
+                          ? "text-amber-600"
+                          : "text-emerald-600"
+                      }`}
+                    >
+                      {utilization}% utilized
+                    </span>
+                  </div>
+                  <div className="relative h-8 w-full overflow-hidden rounded-lg bg-muted/40">
+                    <svg
+                      className="h-full w-full"
+                      viewBox="0 0 100 32"
+                      preserveAspectRatio="none"
+                    >
+                      <polyline
+                        points={utilizationData
+                          .map(
+                            (val, idx) =>
+                              `${(idx / (utilizationData.length - 1)) * 100},${
+                                32 - (val / maxUtil) * 32
+                              }`
+                          )
+                          .join(" ")}
+                        fill="none"
+                        stroke={
+                          utilization >= 70
+                            ? "var(--civic-danger-500)"
+                            : utilization >= 45
+                            ? "var(--civic-warning-500)"
+                            : "var(--civic-success-500)"
+                        }
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{item.busy} busy</span>
+                    <span>{item.available} available</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title="Utilization by Resource Type"
+          description="Current capacity vs demand"
+        >
+          <div className="space-y-4">
+            {fleetStatus.map((item) => {
+              const utilization = Math.round((item.busy / item.total) * 100);
+              const availablePct = (item.available / item.total) * 100;
+              const busyPct = (item.busy / item.total) * 100;
+              
+              return (
+                <div key={item.role} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-foreground">
+                      {item.role}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {item.busy}/{item.total} units
+                    </span>
+                  </div>
+                  <div className="relative h-6 overflow-hidden rounded-full bg-muted/40">
+                    <div
+                      className="absolute left-0 top-0 h-full bg-emerald-500 transition-all"
+                      style={{ width: `${availablePct}%` }}
+                    />
+                    <div
+                      className="absolute left-0 top-0 h-full bg-amber-500 transition-all"
+                      style={{
+                        width: `${busyPct}%`,
+                        left: `${availablePct}%`,
+                      }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground">
+                      {utilization}%
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </SectionCard>
+      </div>
+
+      {/* Recommendations Section */}
+      <SectionCard
+        title="Recommendations"
+        description="Actionable insights based on current utilization"
+      >
+        <div className="space-y-4">
+          {fleetStatus
+            .filter((item) => {
+              const utilization = Math.round((item.busy / item.total) * 100);
+              return utilization >= 70;
+            })
+            .map((item) => {
+              const utilization = Math.round((item.busy / item.total) * 100);
+              const shortage = Math.ceil((item.total * 0.3) - item.available);
+              
+              return (
+                <div
+                  key={item.role}
+                  className="rounded-xl border border-amber-200 bg-amber-50/50 p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-amber-500/20">
+                      <svg
+                        className="h-4 w-4 text-amber-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-foreground">
+                        High {item.role} Utilization
+                      </h4>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {item.role} units are operating at {utilization}%
+                        capacity. Consider adding{" "}
+                        {shortage > 0 ? (
+                          <span className="font-semibold text-amber-700">
+                            {shortage} additional {item.role.toLowerCase()}
+                            {item.role.toLowerCase().includes("ambulance") ||
+                            item.role.toLowerCase().includes("ems")
+                              ? ""
+                              : " unit" + (shortage > 1 ? "s" : "")}
+                          </span>
+                        ) : (
+                          <span className="font-semibold text-amber-700">
+                            more {item.role.toLowerCase()} units
+                          </span>
+                        )}{" "}
+                        to maintain optimal response times during peak demand.
+                      </p>
+                      {item.role.toLowerCase().includes("ambulance") ||
+                      item.role.toLowerCase().includes("ems") ? (
+                        <p className="mt-2 text-xs font-medium text-amber-700">
+                          💡 Recommendation: Purchase {Math.max(2, shortage)}{" "}
+                          additional ambulances to improve coverage
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          
+          {fleetStatus.every((item) => {
+            const utilization = Math.round((item.busy / item.total) * 100);
+            return utilization < 70;
+          }) ? (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/20">
+                  <svg
+                    className="h-4 w-4 text-emerald-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-foreground">
+                    Resource Capacity Optimal
+                  </h4>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    All resource types are operating within optimal utilization
+                    ranges. Current fleet capacity is sufficient for current
+                    demand levels.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </SectionCard>
+
       <SectionCard
         title="Recent Incidents"
         description="Latest activity across all categories"

@@ -17,14 +17,21 @@ export default function ComposePage() {
     email: false,
   });
 
-  // Load selected barangays from session storage
+  // Load selected barangays and alert type from session storage
+  const [alertType, setAlertType] = useState<"warning" | "critical">("critical");
+
   useEffect(() => {
     const stored = sessionStorage.getItem("alertBarangays");
     if (stored) {
       setSelectedBarangays(JSON.parse(stored));
     } else {
       // Default selection
-      setSelectedBarangays(["san-roque", "riverside", "malanday"]);
+      setSelectedBarangays(["san-roque", "santa-ana", "malanday"]);
+    }
+
+    const storedAlertType = sessionStorage.getItem("alertType");
+    if (storedAlertType) {
+      setAlertType(storedAlertType as "warning" | "critical");
     }
   }, []);
 
@@ -58,19 +65,23 @@ export default function ComposePage() {
         channels: Object.entries(channels)
           .filter(([, enabled]) => enabled)
           .map(([name]) => name),
+        alertType: alertType,
       })
     );
+    // Mark that we've sent an alert so we can reset dismissals when returning
+    sessionStorage.setItem("hadSentAlert", "true");
     router.push("/monitoring/sent");
   };
 
-  // Generate alert message
+  // Generate alert message based on alert type
   const alertMessage = useMemo(() => {
     const barangayNames = selectedDetails.map((b) => b.name).join(", ");
     const centers = selectedDetails.map((b) => `• ${b.evacuationCenter}`).join("\n");
 
-    return `FLOOD WARNING — ${barangayNames}
+    if (alertType === "critical") {
+      return `FLOOD ALERT — ${barangayNames}
 
-Water levels have reached critical threshold. Evacuate to higher ground immediately.
+Water levels have reached CRITICAL threshold. Evacuate to higher ground immediately.
 
 Evacuation Centers:
 ${centers}
@@ -78,7 +89,21 @@ ${centers}
 For assistance call: 911 or 8888
 
 — City Disaster Risk Reduction Office`;
-  }, [selectedDetails]);
+    } else {
+      return `FLOOD WARNING — ${barangayNames}
+
+Water levels are rising and approaching warning threshold. Prepare for possible evacuation. Monitor water levels closely.
+
+Evacuation Centers (if needed):
+${centers}
+
+Stay alert and be ready to evacuate if conditions worsen.
+
+For assistance call: 911 or 8888
+
+— City Disaster Risk Reduction Office`;
+    }
+  }, [selectedDetails, alertType]);
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -108,9 +133,17 @@ For assistance call: 911 or 8888
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
             Alert Message
           </h3>
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p className="text-sm font-semibold text-red-700 mb-2">
-              FLOOD WARNING — {selectedDetails.map((b) => b.name).join(", ") || "No barangays selected"}
+          <div className={cn(
+            "rounded-lg border p-4",
+            alertType === "critical"
+              ? "border-red-200 bg-red-50"
+              : "border-amber-200 bg-amber-50"
+          )}>
+            <p className={cn(
+              "text-sm font-semibold mb-2",
+              alertType === "critical" ? "text-red-700" : "text-amber-700"
+            )}>
+              {alertType === "critical" ? "FLOOD ALERT" : "FLOOD WARNING"} — {selectedDetails.map((b) => b.name).join(", ") || "No barangays selected"}
             </p>
             <pre className="whitespace-pre-wrap text-sm text-slate-700 font-sans">
               {alertMessage}
@@ -187,12 +220,14 @@ For assistance call: 911 or 8888
           className={cn(
             "w-full flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-semibold text-white transition-all",
             selectedBarangays.length > 0
-              ? "bg-red-600 hover:bg-red-700 active:scale-[0.99]"
+              ? alertType === "critical"
+                ? "bg-red-600 hover:bg-red-700 active:scale-[0.99]"
+                : "bg-amber-600 hover:bg-amber-700 active:scale-[0.99]"
               : "cursor-not-allowed bg-slate-300"
           )}
         >
           <Send className="h-5 w-5" />
-          Send Alert to {totalResidents.toLocaleString()} Residents
+          Send {alertType === "critical" ? "Alert" : "Warning"} to {totalResidents.toLocaleString()} Residents
         </button>
       </main>
     </div>

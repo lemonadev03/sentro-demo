@@ -22,6 +22,8 @@ export const mockIncident = {
   phone: "+63 917 555 0184",
   photoUrl: "/demo/accident.jpg",
   incidentMapUrl: "/demo/map-incident.png",
+  reporterRating: 4.7,
+  reporterVerified: true,
 };
 
 export const mockResponders = [

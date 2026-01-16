@@ -11,6 +11,7 @@ import ResponderCard from "@/components/ResponderCard";
 import StatusBadge, { StatusBadgeValue } from "@/components/StatusBadge";
 import FloatingActionBar from "@/components/FloatingActionBar";
 import { assignedResponder, mockIncident } from "@/lib/mock-data";
+import { MessageCircle, MessageSquare, Phone } from "lucide-react";
 
 const IncidentMap = dynamic(() => import("@/components/IncidentMap"), {
   ssr: false,
@@ -55,6 +56,58 @@ const steps = [
 
 const statusFallback = ["pending", "assigned", "enroute", "resolved"] as const;
 
+// Mock data for activity log, messages, and calls
+const activityLog = [
+  {
+    id: "log-1",
+    time: "6 min ago",
+    author: "System",
+    detail: "Your report has been received and is being reviewed.",
+  },
+  {
+    id: "log-2",
+    time: "4 min ago",
+    author: "Dispatch",
+    detail: "Incident assigned to Unit 14. Responder is being briefed.",
+  },
+  {
+    id: "log-3",
+    time: "2 min ago",
+    author: "Dispatch",
+    detail: "Unit 14 is en route. Estimated arrival in 6 minutes.",
+  },
+];
+
+const messageLog = [
+  {
+    id: "message-1",
+    sender: "You",
+    time: "5 min ago",
+    message: "Is there an update on when help will arrive?",
+  },
+  {
+    id: "message-2",
+    sender: "Dispatch",
+    time: "4 min ago",
+    message: "Yes, Unit 14 has been assigned and is en route. ETA 6 minutes.",
+  },
+  {
+    id: "message-3",
+    sender: "You",
+    time: "1 min ago",
+    message: "Thank you for the update.",
+  },
+];
+
+const callLog = [
+  {
+    id: "call-1",
+    contact: "Dispatch",
+    time: "3 min ago",
+    detail: "Called to confirm location. Confirmed safe to approach.",
+  },
+];
+
 export default function CitizenTrackingPage() {
   const searchParams = useSearchParams();
   const statusParam = searchParams.get("status");
@@ -63,6 +116,10 @@ export default function CitizenTrackingPage() {
   )
     ? ((statusParam ?? "pending") as StatusBadgeValue)
     : "pending";
+
+  const [messagesOpen, setMessagesOpen] = useState(false);
+  const [callsOpen, setCallsOpen] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
 
   const showResponder = status === "assigned" || status === "enroute";
   const showResolved = status === "resolved";
@@ -161,10 +218,131 @@ export default function CitizenTrackingPage() {
       )}
 
     </main>
+
+    {/* Floating panels for messages, calls, and comments */}
+    <div className="fixed bottom-24 right-6 z-30 flex flex-col items-end gap-3">
+      {messagesOpen && (
+        <div className="w-80 rounded-2xl border border-border bg-card p-4 shadow-xl">
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold">Messages</p>
+              <p className="text-xs text-muted-foreground">Dispatch</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMessagesOpen(false)}
+              className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-muted-foreground hover:bg-muted"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-2 max-h-[400px] overflow-y-auto">
+            {messageLog.map((msg) => (
+              <div
+                key={msg.id}
+                className={`rounded-xl px-3 py-2 text-xs ${
+                  msg.sender === "You"
+                    ? "ml-auto max-w-[80%] bg-primary text-primary-foreground"
+                    : "bg-muted/40 text-muted-foreground"
+                }`}
+              >
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <span className="font-semibold">{msg.sender}</span>
+                  <span className="text-[10px] opacity-70">{msg.time}</span>
+                </div>
+                <p>{msg.message}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 flex items-center gap-2">
+            <input
+              className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs"
+              placeholder="Send message…"
+            />
+            <button className="rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground">
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+
+      {callsOpen && (
+        <div className="w-80 rounded-2xl border border-border bg-card p-4 shadow-xl">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-semibold">Call history</p>
+            <button
+              type="button"
+              onClick={() => setCallsOpen(false)}
+              className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-muted-foreground hover:bg-muted"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-3">
+            {callLog.map((call) => (
+              <div
+                key={call.id}
+                className="rounded-xl border border-border bg-muted/20 px-3 py-2"
+              >
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-foreground">
+                    {call.contact}
+                  </span>
+                  <span className="text-muted-foreground">{call.time}</span>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {call.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+          <button className="mt-4 w-full rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90">
+            Call Dispatch
+          </button>
+        </div>
+      )}
+
+      {commentsOpen && (
+        <div className="w-80 rounded-2xl border border-border bg-card p-4 shadow-xl">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-semibold">Activity log</p>
+            <button
+              type="button"
+              onClick={() => setCommentsOpen(false)}
+              className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-muted-foreground hover:bg-muted"
+            >
+              Close
+            </button>
+          </div>
+          <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            {activityLog.map((log) => (
+              <div
+                key={log.id}
+                className="rounded-xl border border-border bg-muted/30 p-3"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-semibold text-foreground">
+                    {log.author}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {log.time}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">{log.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
     <FloatingActionBar
-      onComments={() => console.log("Comments clicked")}
-      onGroupChat={() => console.log("Group chat clicked")}
-      onCall={() => console.log("Call clicked")}
+      onComments={() => setCommentsOpen((prev) => !prev)}
+      onGroupChat={() => setMessagesOpen((prev) => !prev)}
+      onCall={() => setCallsOpen((prev) => !prev)}
+      commentsActive={commentsOpen}
+      groupChatActive={messagesOpen}
+      callActive={callsOpen}
     />
     </>
   );

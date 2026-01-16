@@ -84,7 +84,7 @@ export default function SentPage() {
                 <p className="text-sm text-muted-foreground">Barangays</p>
                 <p className="font-semibold">
                   {alertData?.barangays?.join(", ") ||
-                    "San Roque, Riverside, Malanday"}
+                    "San Roque, Santa Ana, Malanday"}
                 </p>
               </div>
             </div>
@@ -146,6 +146,10 @@ export default function SentPage() {
         <Link
           href="/monitoring"
           className="inline-flex w-full items-center justify-center rounded-xl border border-border bg-card px-6 py-4 font-semibold text-foreground hover:bg-muted transition-colors"
+          onClick={() => {
+            // Clear the sent alert data so they can send again
+            sessionStorage.removeItem("alertSent");
+          }}
         >
           Return to Monitoring
         </Link>

@@ -65,9 +65,9 @@ export default function DispatchMonitoringPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col">
           <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-            <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="text-lg font-semibold">Incident status</h2>
                 <p className="text-sm text-muted-foreground">
@@ -76,23 +76,23 @@ export default function DispatchMonitoringPage() {
               </div>
               <StatusBadge status="enroute" />
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="mb-6 text-sm text-muted-foreground">
               Unit 14 is en route. Estimated arrival {assignedResponder.eta}.
             </p>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold">Assigned responder</h2>
-            <ResponderCard
-              name={assignedResponder.name}
-              lead={assignedResponder.lead}
-              role={assignedResponder.role}
-              status="enroute"
-              eta={assignedResponder.eta}
-              distance={assignedResponder.distance}
-              vehicle={assignedResponder.vehicle}
-              contact={assignedResponder.contact}
-            />
+            <div className="border-t border-border pt-6">
+              <h3 className="mb-4 text-base font-semibold">Assigned responder</h3>
+              <ResponderCard
+                name={assignedResponder.name}
+                lead={assignedResponder.lead}
+                role={assignedResponder.role}
+                status="enroute"
+                eta={assignedResponder.eta}
+                distance={assignedResponder.distance}
+                vehicle={assignedResponder.vehicle}
+                contact={assignedResponder.contact}
+                className="border-0 bg-transparent p-0 shadow-none"
+              />
+            </div>
           </div>
         </div>
       </div>

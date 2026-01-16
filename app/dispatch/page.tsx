@@ -138,6 +138,25 @@ export default function DispatchHomePage() {
             Dispatch
           </span>
         </div>
+        <Link
+          href="/dispatch/audit-logs"
+          className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs font-semibold hover:bg-muted transition-colors"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          Audit Logs
+        </Link>
       </header>
 
       <SectionCard title="Today" description="Active incidents and response load.">
@@ -231,7 +250,7 @@ export default function DispatchHomePage() {
           description="Dispatch macros and quick actions."
         >
           <div className="space-y-3 text-sm text-muted-foreground">
-            <p>Last: “Broadcast staging at 3rd & Pine.”</p>
+            <p>Last: “Broadcast staging at Rizal Ave & Recto Ave.”</p>
             <input
               className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground"
               placeholder="Type a command, e.g. /assign Unit 14 to P-2210"

@@ -23,10 +23,10 @@ type MonitoringMapProps = {
 // SVG path data for each barangay zone
 const zonePaths: Record<string, string> = {
   "san-roque": "M40,40 L120,30 L130,90 L100,120 L50,100 Z",
-  "riverside": "M120,30 L200,35 L210,100 L130,90 Z",
+  "santa-ana": "M120,30 L200,35 L210,100 L130,90 Z",
   "malanday": "M200,35 L280,50 L270,130 L210,100 Z",
-  "centro": "M280,50 L360,70 L350,160 L270,130 Z",
-  "san-jose": "M350,160 L360,70 L400,90 L400,180 L380,200 Z",
+  "tumana": "M280,50 L360,70 L350,160 L270,130 Z",
+  "concepcion": "M350,160 L360,70 L400,90 L400,180 L380,200 Z",
 };
 
 const getZoneColors = (status: SensorStatus) => {
@@ -185,10 +185,10 @@ export default function MonitoringMap({
 function getZoneCenter(zoneId: string): { x: number; y: number } {
   const centers: Record<string, { x: number; y: number }> = {
     "san-roque": { x: 85, y: 70 },
-    "riverside": { x: 165, y: 65 },
+    "santa-ana": { x: 165, y: 65 },
     "malanday": { x: 240, y: 80 },
-    "centro": { x: 315, y: 105 },
-    "san-jose": { x: 375, y: 140 },
+    "tumana": { x: 315, y: 105 },
+    "concepcion": { x: 375, y: 140 },
   };
   return centers[zoneId] || { x: 0, y: 0 };
 }

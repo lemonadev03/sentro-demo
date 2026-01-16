@@ -135,41 +135,92 @@ export default function DispatchIncidentPage() {
               description={`${mockIncident.type} • ${mockIncident.locationLabel}`}
               action={<StatusBadge status="major" />}
             >
-              <div className="grid gap-6 text-sm text-muted-foreground md:grid-cols-2">
-                <div className="space-y-2">
-                  <p className="font-semibold text-foreground">Caller</p>
-                  <p>{mockIncident.callerName}</p>
-                  <p>{mockIncident.phone}</p>
-                  <p className="mt-4 text-xs uppercase tracking-wide text-muted-foreground">
-                    Callback status
-                  </p>
-                  <p>Connected • Confirmed safe to approach</p>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div>
+                    <div className="mb-2 flex items-center gap-2">
+                      <p className="text-sm font-semibold text-foreground">Caller</p>
+                      {mockIncident.reporterVerified ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600">
+                          <svg
+                            className="h-3 w-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          Verified
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-600">
+                          Unverified
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-base font-medium text-foreground">{mockIncident.callerName}</p>
+                    <p className="text-sm text-muted-foreground">{mockIncident.phone}</p>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-1.5">
+                      <svg
+                        className="h-4 w-4 text-amber-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span className="text-sm font-semibold text-foreground">
+                        {mockIncident.reporterRating?.toFixed(1) || "N/A"}
+                      </span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Reporter rating
+                    </span>
+                  </div>
+                  <div>
+                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Callback status
+                    </p>
+                    <p className="text-sm font-medium text-foreground">Connected • Confirmed safe to approach</p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <p className="font-semibold text-foreground">Reported</p>
-                  <p>{mockIncident.reportedAt}</p>
-                  <p>{mockIncident.address}</p>
-                  <p className="mt-4 text-xs uppercase tracking-wide text-muted-foreground">
-                    Location accuracy
-                  </p>
-                  <p>GPS lock • 14m radius</p>
+                <div className="space-y-4">
+                  <div>
+                    <p className="mb-2 text-sm font-semibold text-foreground">Reported</p>
+                    <p className="text-sm font-medium text-foreground">{mockIncident.reportedAt}</p>
+                    <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{mockIncident.address}</p>
+                  </div>
+                  <div>
+                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Location accuracy
+                    </p>
+                    <p className="text-sm font-medium text-foreground">GPS lock • 14m radius</p>
+                  </div>
                 </div>
               </div>
-              <div className="mt-6 rounded-2xl border border-border bg-muted/40 p-4 text-sm">
-                {mockIncident.description}
+              <div className="mt-6 rounded-xl border border-border bg-muted/30 p-5">
+                <p className="text-sm leading-relaxed text-foreground">
+                  {mockIncident.description}
+                </p>
               </div>
-              <div className="mt-6 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-                <div className="rounded-xl bg-muted/40 px-3 py-2">
-                  <p className="text-xs uppercase tracking-wide">Priority</p>
-                  <p className="font-semibold text-foreground">Major</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl bg-muted/30 px-4 py-3">
+                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">Priority</p>
+                  <p className="text-base font-semibold text-foreground">Major</p>
                 </div>
-                <div className="rounded-xl bg-muted/40 px-3 py-2">
-                  <p className="text-xs uppercase tracking-wide">Injuries</p>
-                  <p className="font-semibold text-foreground">1 possible</p>
+                <div className="rounded-xl bg-muted/30 px-4 py-3">
+                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">Injuries</p>
+                  <p className="text-base font-semibold text-foreground">1 possible</p>
                 </div>
-                <div className="rounded-xl bg-muted/40 px-3 py-2">
-                  <p className="text-xs uppercase tracking-wide">Traffic</p>
-                  <p className="font-semibold text-foreground">Heavy</p>
+                <div className="rounded-xl bg-muted/30 px-4 py-3">
+                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">Traffic</p>
+                  <p className="text-base font-semibold text-foreground">Heavy</p>
                 </div>
               </div>
               <div className="mt-8 border-t border-border pt-6">
@@ -293,7 +344,7 @@ export default function DispatchIncidentPage() {
                     Initial report
                   </span>
                   <div className="rounded-xl border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
-                    Caller reports two vehicles blocking lanes, one occupant reporting neck pain. Traffic backing up toward Mission.
+                    Caller reports two vehicles blocking lanes, one occupant reporting neck pain. Traffic backing up toward Quezon Ave.
                   </div>
                 </label>
               </div>
@@ -314,16 +365,23 @@ export default function DispatchIncidentPage() {
       <SectionCard title="CCTV verification" description="Nearby cameras for situational awareness.">
         <div className="grid gap-3 sm:grid-cols-3">
           {[
-            "CCTV 12A • EDSA",
-            "CCTV 09C • Aurora Blvd",
-            "CCTV 03B • Taft Ave",
+            { label: "CCTV 12A • EDSA cor. Aurora Blvd, Quezon City", image: "/photos/cctv1.png" },
+            { label: "CCTV 09C • 123 Aurora Blvd, Quezon City", image: "/photos/cctv2.png" },
+            { label: "CCTV 03B • EDSA cor. Timog Ave, Quezon City", image: "/photos/cctv3.png" },
           ].map(
-            (label) => (
+            (cctv) => (
               <div
-                key={label}
-                className="flex h-28 items-center justify-center rounded-xl border border-dashed border-border bg-muted/40 text-xs text-muted-foreground"
+                key={cctv.label}
+                className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/40"
               >
-                {label} feed
+                <img
+                  src={cctv.image}
+                  alt={cctv.label}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-2 py-1 text-xs font-semibold text-white">
+                  {cctv.label}
+                </div>
               </div>
             )
           )}
@@ -662,9 +720,9 @@ export default function DispatchIncidentPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col">
               <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-                <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-semibold">Incident status</h2>
                     <p className="text-sm text-muted-foreground">
@@ -673,23 +731,23 @@ export default function DispatchIncidentPage() {
                   </div>
                   <StatusBadge status="enroute" />
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="mb-6 text-sm text-muted-foreground">
                   Unit 14 is en route. Estimated arrival {assignedResponder.eta}.
                 </p>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-                <h2 className="mb-4 text-lg font-semibold">Assigned responder</h2>
-                <ResponderCard
-                  name={assignedResponder.name}
-                  lead={assignedResponder.lead}
-                  role={assignedResponder.role}
-                  status="enroute"
-                  eta={assignedResponder.eta}
-                  distance={assignedResponder.distance}
-                  vehicle={assignedResponder.vehicle}
-                  contact={assignedResponder.contact}
-                />
+                <div className="border-t border-border pt-6">
+                  <h3 className="mb-4 text-base font-semibold">Assigned responder</h3>
+                  <ResponderCard
+                    name={assignedResponder.name}
+                    lead={assignedResponder.lead}
+                    role={assignedResponder.role}
+                    status="enroute"
+                    eta={assignedResponder.eta}
+                    distance={assignedResponder.distance}
+                    vehicle={assignedResponder.vehicle}
+                    contact={assignedResponder.contact}
+                    className="border-0 bg-transparent p-0 shadow-none"
+                  />
+                </div>
               </div>
             </div>
           </div>

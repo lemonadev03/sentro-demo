@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -35,6 +35,8 @@ export default function MonitoringPage() {
     setBannerDismissed,
     floatingAlertDismissed,
     setFloatingAlertDismissed,
+    warningAlertDismissed,
+    setWarningAlertDismissed,
     alertTriggered,
   } = useMonitoring();
 
@@ -44,6 +46,34 @@ export default function MonitoringPage() {
     : waterLevel > 2.0
     ? "warning"
     : "normal";
+
+  // Determine if warning level is reached (but not critical)
+  const warningTriggered = waterLevel > 2.0 && waterLevel <= 2.5;
+
+  // Reset dismissal states when returning from sent page to allow multiple sends
+  useEffect(() => {
+    // Check if we just returned from the sent page
+    const hadSentAlert = sessionStorage.getItem("hadSentAlert");
+    const alertSent = sessionStorage.getItem("alertSent");
+    
+    // If we had sent an alert but alertSent is now cleared (user returned from sent page)
+    if (hadSentAlert && !alertSent) {
+      // Always reset dismissals when returning so alerts can show again for multiple sends
+      setFloatingAlertDismissed(false);
+      setWarningAlertDismissed(false);
+      // Clear the flag
+      sessionStorage.removeItem("hadSentAlert");
+    }
+  }, [setFloatingAlertDismissed, setWarningAlertDismissed]);
+
+  // Also reset critical alert dismissal when water level escalates to critical
+  // This ensures critical alert shows even if it was dismissed at warning level
+  useEffect(() => {
+    if (alertTriggered) {
+      // When critical, ensure critical alert can show
+      setFloatingAlertDismissed(false);
+    }
+  }, [alertTriggered, setFloatingAlertDismissed]);
 
   // Compute sensor data based on water level
   const sensorsData = useMemo(() => {
@@ -83,7 +113,7 @@ export default function MonitoringPage() {
       if (alertTriggered) {
         if (["san-roque", "malanday"].includes(b.id)) {
           status = "critical";
-        } else if (b.id === "riverside") {
+        } else if (b.id === "santa-ana") {
           status = "warning";
         }
       }
@@ -103,7 +133,7 @@ export default function MonitoringPage() {
 
   // Affected barangays for floating alert
   const affectedBarangays = useMemo(() => {
-    const affectedIds = ["san-roque", "riverside", "malanday"];
+    const affectedIds = ["san-roque", "santa-ana", "malanday"];
     return barangays
       .filter((b) => affectedIds.includes(b.id))
       .map((b) => ({
@@ -112,10 +142,13 @@ export default function MonitoringPage() {
       }));
   }, []);
 
-  const handleSendAlerts = () => {
-    // Store affected barangay IDs in session storage for compose page
-    const affectedIds = ["san-roque", "riverside", "malanday"];
+  const handleSendAlerts = (alertType: "warning" | "critical") => {
+    // Store affected barangay IDs and alert type in session storage for compose page
+    const affectedIds = ["san-roque", "santa-ana", "malanday"];
     sessionStorage.setItem("alertBarangays", JSON.stringify(affectedIds));
+    sessionStorage.setItem("alertType", alertType);
+    // Don't dismiss the alert when sending - allow multiple sends
+    // Only dismiss when user explicitly clicks the X button
     router.push("/monitoring/compose");
   };
 
@@ -196,12 +229,24 @@ export default function MonitoringPage() {
         <WaterLevelSlider value={waterLevel} onChange={setWaterLevel} />
       </main>
 
-      {/* Floating Alert - appears when alert triggered */}
+      {/* Floating Alert - Critical (appears when alert triggered) */}
       {alertTriggered && !floatingAlertDismissed && (
         <FloatingAlert
+          key="critical-alert"
           affectedBarangays={affectedBarangays}
-          onSendAlerts={handleSendAlerts}
+          onSendAlerts={() => handleSendAlerts("critical")}
           onDismiss={() => setFloatingAlertDismissed(true)}
+          alertType="critical"
+        />
+      )}
+
+      {/* Floating Alert - Warning (appears when warning level reached) */}
+      {warningTriggered && !alertTriggered && !warningAlertDismissed && (
+        <FloatingAlert
+          affectedBarangays={affectedBarangays}
+          onSendAlerts={() => handleSendAlerts("warning")}
+          onDismiss={() => setWarningAlertDismissed(true)}
+          alertType="warning"
         />
       )}
     </div>
