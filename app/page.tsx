@@ -1,16 +1,36 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import SectionCard from "@/components/SectionCard";
+import { logout } from "@/lib/auth";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+    router.refresh();
+  };
+
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-6 py-10">
       <header className="flex flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-semibold">Sentro</h1>
-          <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
-            A calm, human-centered incident response demo for citizens,
-            dispatchers, and responders.
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-semibold">Sentro</h1>
+            <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
+              A calm, human-centered incident response demo for citizens,
+              dispatchers, and responders.
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted transition-colors"
+          >
+            Sign out
+          </button>
         </div>
       </header>
 

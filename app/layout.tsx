@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
+import AuthGuard from "@/components/AuthGuard";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,7 +34,9 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${plusJakartaSans.variable} ${jetBrainsMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <AuthGuard>{children}</AuthGuard>
+      </body>
     </html>
   );
 }
