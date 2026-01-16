@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import HeaderBar from "@/components/HeaderBar";
 import SectionCard from "@/components/SectionCard";
@@ -56,59 +56,7 @@ const steps = [
 
 const statusFallback = ["pending", "assigned", "enroute", "resolved"] as const;
 
-// Mock data for activity log, messages, and calls
-const activityLog = [
-  {
-    id: "log-1",
-    time: "6 min ago",
-    author: "System",
-    detail: "Your report has been received and is being reviewed.",
-  },
-  {
-    id: "log-2",
-    time: "4 min ago",
-    author: "Dispatch",
-    detail: "Incident assigned to Unit 14. Responder is being briefed.",
-  },
-  {
-    id: "log-3",
-    time: "2 min ago",
-    author: "Dispatch",
-    detail: "Unit 14 is en route. Estimated arrival in 6 minutes.",
-  },
-];
-
-const messageLog = [
-  {
-    id: "message-1",
-    sender: "You",
-    time: "5 min ago",
-    message: "Is there an update on when help will arrive?",
-  },
-  {
-    id: "message-2",
-    sender: "Dispatch",
-    time: "4 min ago",
-    message: "Yes, Unit 14 has been assigned and is en route. ETA 6 minutes.",
-  },
-  {
-    id: "message-3",
-    sender: "You",
-    time: "1 min ago",
-    message: "Thank you for the update.",
-  },
-];
-
-const callLog = [
-  {
-    id: "call-1",
-    contact: "Dispatch",
-    time: "3 min ago",
-    detail: "Called to confirm location. Confirmed safe to approach.",
-  },
-];
-
-export default function CitizenTrackingPage() {
+function CitizenTrackingContent() {
   const searchParams = useSearchParams();
   const statusParam = searchParams.get("status");
   const status: StatusBadgeValue = statusFallback.includes(
@@ -345,5 +293,65 @@ export default function CitizenTrackingPage() {
       callActive={callsOpen}
     />
     </>
+  );
+}
+
+// Mock data for activity log, messages, and calls
+const activityLog = [
+  {
+    id: "log-1",
+    time: "6 min ago",
+    author: "System",
+    detail: "Your report has been received and is being reviewed.",
+  },
+  {
+    id: "log-2",
+    time: "4 min ago",
+    author: "Dispatch",
+    detail: "Incident assigned to Unit 14. Responder is being briefed.",
+  },
+  {
+    id: "log-3",
+    time: "2 min ago",
+    author: "Dispatch",
+    detail: "Unit 14 is en route. Estimated arrival in 6 minutes.",
+  },
+];
+
+const messageLog = [
+  {
+    id: "message-1",
+    sender: "You",
+    time: "5 min ago",
+    message: "Is there an update on when help will arrive?",
+  },
+  {
+    id: "message-2",
+    sender: "Dispatch",
+    time: "4 min ago",
+    message: "Yes, Unit 14 has been assigned and is en route. ETA 6 minutes.",
+  },
+  {
+    id: "message-3",
+    sender: "You",
+    time: "1 min ago",
+    message: "Thank you for the update.",
+  },
+];
+
+const callLog = [
+  {
+    id: "call-1",
+    contact: "Dispatch",
+    time: "3 min ago",
+    detail: "Called to confirm location. Confirmed safe to approach.",
+  },
+];
+
+export default function CitizenTrackingPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <CitizenTrackingContent />
+    </Suspense>
   );
 }

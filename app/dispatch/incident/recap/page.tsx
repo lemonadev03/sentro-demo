@@ -17,7 +17,6 @@ export default function IncidentRecapPage() {
       <HeaderBar
         title="Incident Recap"
         backHref="/dispatch/incident"
-        description="Incident resolved and closed"
       />
 
       <SectionCard

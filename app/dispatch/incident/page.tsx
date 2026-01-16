@@ -1,7 +1,7 @@
  "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import HeaderBar from "@/components/HeaderBar";
 import ResponderCard from "@/components/ResponderCard";
@@ -38,7 +38,7 @@ type UnitAssignment = {
   [category: string]: string[]; // category -> unit IDs
 };
 
-export default function DispatchIncidentPage() {
+function DispatchIncidentContent() {
   const router = useRouter();
   const [aiEnabled, setAiEnabled] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
@@ -1183,5 +1183,13 @@ export default function DispatchIncidentPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function DispatchIncidentPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <DispatchIncidentContent />
+    </Suspense>
   );
 }
