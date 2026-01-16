@@ -71,7 +71,66 @@ const statusTone: Record<string, string> = {
 
 export default function DispatchHomePage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-8">
+    <>
+      <Link
+        href="/dispatch/incident"
+        className="fixed bottom-6 right-6 z-50 w-80"
+        style={{
+          animation: "slideInRight 0.3s ease-out",
+        }}
+      >
+        <div className="overflow-hidden rounded-2xl border-2 border-red-400 bg-white shadow-2xl shadow-red-500/20 hover:shadow-red-500/30 transition-shadow">
+          {/* Header */}
+          <div className="flex items-center justify-between bg-gradient-to-r from-red-600 to-orange-500 px-4 py-3">
+            <div className="flex items-center gap-2 text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <span className="font-bold uppercase tracking-wide">
+                New Incident
+              </span>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-4">
+            <p className="text-sm text-slate-600 mb-4">
+              A new incident has been reported and requires your attention.
+            </p>
+
+            {/* CTA Button */}
+            <div className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 font-semibold text-white hover:bg-red-700 active:scale-[0.98] transition-all cursor-pointer">
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+              View Incident
+            </div>
+          </div>
+        </div>
+      </Link>
+      <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-8">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-lg font-semibold">Sentro</span>
@@ -79,12 +138,6 @@ export default function DispatchHomePage() {
             Dispatch
           </span>
         </div>
-        <Link
-          href="/dispatch/incident"
-          className="rounded-full border border-border px-4 py-2 text-sm font-semibold hover:bg-muted"
-        >
-          View new incident
-        </Link>
       </header>
 
       <SectionCard title="Today" description="Active incidents and response load.">
@@ -243,5 +296,6 @@ export default function DispatchHomePage() {
         </SectionCard>
       </div>
     </main>
+    </>
   );
 }
