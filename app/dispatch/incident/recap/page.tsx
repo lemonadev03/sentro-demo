@@ -7,6 +7,11 @@ import StatusBadge from "@/components/StatusBadge";
 import { mockIncident, assignedResponder, mockResponders } from "@/lib/mock-data";
 
 export default function IncidentRecapPage() {
+  const priorityLabel =
+    mockIncident.priority.charAt(0).toUpperCase() +
+    mockIncident.priority.slice(1);
+  const summaryNarrative = `At ${mockIncident.locationLabel}, caller ${mockIncident.callerName} reported a ${mockIncident.type.toLowerCase()} involving two vehicles. ${assignedResponder.name} was dispatched and arrived on scene to secure the area and manage traffic. One driver reported neck pain; medical support staged on standby. Incident was resolved and cleared within 24 minutes with no secondary hazards reported.`;
+
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-8">
       <HeaderBar
@@ -14,6 +19,49 @@ export default function IncidentRecapPage() {
         backHref="/dispatch/incident"
         description="Incident resolved and closed"
       />
+
+      <SectionCard
+        title="AI Executive Summary (Draft)"
+        description="Auto-generated from call intake, unit status updates, and closing notes."
+        action={
+          <span className="inline-flex items-center rounded-full bg-[color:var(--civic-blue-100)] px-3 py-1 text-xs font-semibold text-[color:var(--civic-blue-600)]">
+            Auto-generated
+          </span>
+        }
+      >
+        <div className="space-y-4">
+          <p className="max-w-[72ch] text-sm leading-relaxed text-foreground">
+            {summaryNarrative}
+          </p>
+          <div className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-muted/30 px-3 py-2">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Primary call type
+              </p>
+              <p className="font-semibold text-foreground">
+                {mockIncident.type}
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-muted/30 px-3 py-2">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Priority level
+              </p>
+              <p className="font-semibold text-foreground">{priorityLabel}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-muted/30 px-3 py-2">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Primary unit
+              </p>
+              <p className="font-semibold text-foreground">
+                {assignedResponder.name}
+              </p>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Draft for supervisor review. Update if additional notes are received.
+          </p>
+        </div>
+      </SectionCard>
 
       <SectionCard
         title={mockIncident.title}

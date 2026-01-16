@@ -173,14 +173,14 @@ export default function ResponderAssignmentPage() {
         </div>
       )}
 
-      {/* Group Chat Panel */}
+      {/* Messages Panel */}
       {groupChatOpen && (
         <div className="fixed inset-0 z-[10000] flex items-end justify-center p-4 sm:items-center sm:p-6">
           <div className="absolute inset-0 bg-black/50" onClick={() => setGroupChatOpen(false)} />
           <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-4 shadow-xl">
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold">Group chat</p>
+                <p className="text-sm font-semibold">Messages</p>
                 <p className="text-xs text-muted-foreground">
                   Dispatch, Unit 14, Unit 22
                 </p>
